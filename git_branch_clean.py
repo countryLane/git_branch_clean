@@ -130,10 +130,31 @@ def showIncreaseDiagram(allRemoteBranches):
     plt.show()
 
 
+def deleteBranches(branches):
+    for branchInfo in branches:
+        branch = getBranchName(branchInfo)
+        if len(branch) == 0:
+            continue
+        try:
+            check_output([
+                'git',
+                'push',
+                'origin',
+                ':',
+                branch
+            ])
+        except:
+            print 'error: delete ' + '1231dae1231231asd' + ' failed!'
+        else:
+            print 'sucess: delete ' + '1231dae1231231asd'
+
+
 if __name__ == '__main__':
     allRemoteBranches = remoteBranches()
     deletableBranches = filterDeletableBranches(allRemoteBranches)
     oldDeletableBranches = filterOldDeletableBranches(deletableBranches)
 
-    showDiagram(deletableBranches)
+    # deleteBranches(oldDeletableBranches) #打开这个就可以批量删除远程分支了
+
+    # showDiagram(deletableBranches)
     # showIncreaseDiagram(deletableBranches)
