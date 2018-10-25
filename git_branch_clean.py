@@ -44,7 +44,7 @@ def filterDeletableBranches(allRemoteBranches):
     for index in range(len(allRemoteBranches)):
         branchInfo = allRemoteBranches[index]
         branchName = getBranchName(branchInfo)
-        if branchName.startswith('origin/release') or branchName.startswith('origin/master'):
+        if branchName.startswith('origin/release') or branchName.startswith('origin/master') or branchName.startswith('origin/development'):
             continue
         elif len(branchName) == 0:
             continue
@@ -65,7 +65,7 @@ def filterOldDeletableBranches(deletableBranches):
         middleDate = getBranchCommitterDate(deletableBranches[middle])
         if middleDate < date:
             left = middle + 1
-        if middleDate > date:
+        elif middleDate > date:
             right = middle - 1
         else:
             break;
@@ -132,7 +132,7 @@ def showIncreaseDiagram(allRemoteBranches):
 
 def deleteBranches(branches):
     for branchInfo in branches:
-        branch = getBranchName(branchInfo)
+        branch = getBranchName(branchInfo).lstrip('origin/')
         if len(branch) == 0:
             continue
         try:
@@ -140,13 +140,13 @@ def deleteBranches(branches):
                 'git',
                 'push',
                 'origin',
-                ':',
+                '--delete',
                 branch
             ])
         except:
-            print 'error: delete ' + '1231dae1231231asd' + ' failed!'
+            pass
         else:
-            print 'sucess: delete ' + '1231dae1231231asd'
+            pass
 
 
 if __name__ == '__main__':
@@ -154,7 +154,14 @@ if __name__ == '__main__':
     deletableBranches = filterDeletableBranches(allRemoteBranches)
     oldDeletableBranches = filterOldDeletableBranches(deletableBranches)
 
+    dateStr = sys.argv[2]
+    date = datetime.datetime.strptime(dateStr, '%Y-%m-%d').date()
+    for elem in oldDeletableBranches:
+        aaDate = getBranchCommitterDate(elem)
+        if aaDate > date:
+            print "\n\nerror:error\n"
+
     # deleteBranches(oldDeletableBranches) #打开这个就可以批量删除远程分支了
 
     # showDiagram(deletableBranches)
-    # showIncreaseDiagram(deletableBranches)
+    showIncreaseDiagram(deletableBranches)
